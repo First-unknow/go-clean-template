@@ -20,11 +20,24 @@ func NewUserHandler(e *echo.Echo, middL *middleware.GoMiddleware, us user.UserUs
 		userUs: us,
 	}
 	e.GET("/users", handler.FetchAll)
+	e.GET("/users/:email", handler.FindByMail)
 	e.POST("/users", handler.CreateUser)
 }
 
 func (u *userHandler) FetchAll(c echo.Context) error {
 	users, err := u.userUs.FetchAll()
+	if err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
+	}
+	responseData := map[string]interface{}{
+		"users": users,
+	}
+	return c.JSON(http.StatusOK, responseData)
+}
+
+func (u *userHandler) FindByMail(c echo.Context) error {
+	email := c.Param("email")
+	users, err := u.userUs.FindByMail(email)
 	if err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
 	}
