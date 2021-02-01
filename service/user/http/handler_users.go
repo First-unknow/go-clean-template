@@ -4,8 +4,10 @@ import (
 	"net/http"
 
 	"innovasive/go-clean-template/middleware"
+	models "innovasive/go-clean-template/models"
 	"innovasive/go-clean-template/service/user"
 
+	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
 )
 
@@ -18,7 +20,7 @@ func NewUserHandler(e *echo.Echo, middL *middleware.GoMiddleware, us user.UserUs
 		userUs: us,
 	}
 	e.GET("/users", handler.FetchAll)
-
+	e.POST("/users", handler.CreateUser)
 }
 
 func (u *userHandler) FetchAll(c echo.Context) error {
@@ -30,4 +32,19 @@ func (u *userHandler) FetchAll(c echo.Context) error {
 		"users": users,
 	}
 	return c.JSON(http.StatusOK, responseData)
+}
+
+func (u *userHandler) CreateUser(c echo.Context) error {
+	user := new(models.User)
+	resJSON := make(map[string]uuid.UUID)
+	if err := c.Bind(user); err != nil {
+		return c.JSON(http.StatusNotAcceptable, "Not Acceptable")
+	}
+
+	userID, err := u.userUs.CreateUser(user)
+	if err != nil || userID == uuid.Nil {
+		return c.JSON(http.StatusNotAcceptable, "Not Acceptable")
+	}
+	resJSON["userID"] = userID
+	return c.JSON(http.StatusCreated, resJSON)
 }
