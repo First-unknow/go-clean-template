@@ -24,3 +24,7 @@ func (u userUsecase) FetchAll() ([]*models.User, error) {
 func (u userUsecase) CreateUser(user *models.User) (uuid.UUID, error) {
 	return u.psqlUserRepo.CreateUser(user)
 }
+
+func (u userUsecase) FindByMail(email string) ([]*models.User, error) {
+	return u.psqlUserRepo.FindByMail(email)
+}
