@@ -1,7 +1,12 @@
 package user
 
-import model "innovasive/go-clean-template/models"
+import (
+	models "innovasive/go-clean-template/models"
+
+	"github.com/google/uuid"
+)
 
 type PsqlUserRepositoryInf interface {
-	FetchAll() ([]*model.User, error)
+	FetchAll() ([]*models.User, error)
+	CreateUser(user *models.User) (uuid.UUID, error)
 }
