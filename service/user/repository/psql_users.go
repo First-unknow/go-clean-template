@@ -75,7 +75,7 @@ func (p psqlUserRepository) FindByMail(email string) ([]*models.User, error) {
 }
 
 func (p psqlUserRepository) CreateUser(user *models.User) (uuid.UUID, error) {
-	var userId uuid.UUID
+	var userID uuid.UUID
 	tx, err := p.db.Begin()
 	if err != nil {
 		return uuid.Nil, err
@@ -91,12 +91,12 @@ func (p psqlUserRepository) CreateUser(user *models.User) (uuid.UUID, error) {
 		return uuid.Nil, err
 	}
 	defer stmt.Close()
-	err = stmt.QueryRow(user.Email, user.Firstname, user.Lastname).Scan(&userId)
+	err = stmt.QueryRow(user.Email, user.Firstname, user.Lastname).Scan(&userID)
 
 	if err != nil {
 		return uuid.Nil, err
 	}
-	return userId, nil
+	return userID, nil
 }
 
 func (p psqlUserRepository) orm(rows *sqlx.Rows, joinField []string) ([]*models.User, error) {
