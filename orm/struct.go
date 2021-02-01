@@ -5,6 +5,7 @@ import (
 	"sync"
 
 	"github.com/fatih/structs"
+	"github.com/google/uuid"
 	"github.com/spf13/cast"
 )
 
@@ -55,6 +56,9 @@ func SetFieldFromType(field *structs.Field, v interface{}) error {
 	value = cast.ToString(v)
 
 	switch tag {
+	case typeUUID:
+		uid := uuid.MustParse(value)
+		field.Set(uid)
 	case typeString:
 		field.Set(value)
 	case typeInt32:
