@@ -8,5 +8,6 @@ import (
 
 type UserUsecaseInf interface {
 	FetchAll() ([]*models.User, error)
+	FindByMail(email string) ([]*models.User, error)
 	CreateUser(user *models.User) (uuid.UUID, error)
 }
