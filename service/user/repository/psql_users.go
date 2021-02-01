@@ -8,6 +8,7 @@ import (
 	"innovasive/go-clean-template/orm"
 	"innovasive/go-clean-template/service/user"
 
+	"github.com/google/uuid"
 	"github.com/jmoiron/sqlx"
 )
 
@@ -44,6 +45,31 @@ func (p psqlUserRepository) FetchAll() ([]*models.User, error) {
 	}
 
 	return users, nil
+}
+
+func (p psqlUserRepository) CreateUser(user *models.User) (uuid.UUID, error) {
+	var userId uuid.UUID
+	tx, err := p.db.Begin()
+	if err != nil {
+		return uuid.Nil, err
+	}
+	sql := `
+	INSERT INTO users(email,first_name,last_name)
+	VALUES ($1::text, $2::text, $3::text)
+	RETURNING users.id;
+	`
+	log.Println(sql)
+	stmt, err := tx.Prepare(sql)
+	if err != nil {
+		return uuid.Nil, err
+	}
+	defer stmt.Close()
+	err = stmt.QueryRow(user.Email, user.Firstname, user.Lastname).Scan(&userId)
+
+	if err != nil {
+		return uuid.Nil, err
+	}
+	return userId, nil
 }
 
 func (p psqlUserRepository) orm(rows *sqlx.Rows, joinField []string) ([]*models.User, error) {
