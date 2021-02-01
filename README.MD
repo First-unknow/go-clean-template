@@ -44,6 +44,7 @@ $ CompileDaemon -build="go build innovasive/go-clean-template" -command="./go-cl
   * **Code:** 500 Internal Server Error 
 
 <br />
+
 ## Find User By Mail
 
 ` https://${url}/users/:email`
